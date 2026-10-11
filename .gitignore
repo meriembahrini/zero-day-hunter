@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Fichiers temporaires
+*.log
+*.tmp
+.DS_Store
+
+# Secrets et fichiers d'environnement
+.env
+.env.*
+*.pem
+*.key
+
+# Captures temporaires et exports volumineux
+data/tmp/
+data/live/
+# Fichiers d'installation Tetragon
+installation/
+
+# Fichiers sensibles locaux
+.env
+*.key
+*.pem

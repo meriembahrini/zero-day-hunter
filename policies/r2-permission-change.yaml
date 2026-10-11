@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: r2-permission-change
+
+spec:
+  kprobes:
+    - call: security_path_chmod
+      syscall: false
+      return: true
+
+      args:
+        - index: 0
+          type: path
+
+        - index: 1
+          type: uint32
+
+      returnArg:
+        index: 0
+        type: int
+
+      selectors:
+        - matchArgs:
+            - index: 0
+              operator: Prefix
+              values:
+                - "/home/bahrini/zero-day-hunter/lab/permissions/"
