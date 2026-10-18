@@ -20,7 +20,9 @@ EVENTS_FILE = (
 
 # Fichier de sortie
 OUTPUT_FILE = (
-    Path.home() / "zero-day-hunter/data/scenarios/r1_alerts.jsonl"
+    Path(sys.argv[2])
+    if len(sys.argv) > 2
+    else Path.home() / "zero-day-hunter/data/scenarios/r1_results.jsonl"
 )
 
 already_seen = set()

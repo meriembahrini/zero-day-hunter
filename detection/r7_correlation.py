@@ -11,7 +11,11 @@ INPUT_FILE = (
     else PROJECT / "data/scenarios/r14_raw.jsonl"
 )
 
-OUTPUT_FILE = PROJECT / "data/scenarios/r14_results.jsonl"
+OUTPUT_FILE = (
+    Path(sys.argv[2])
+    if len(sys.argv) > 2
+    else Path.home() / "zero-day-hunter/data/scenarios/r7_results.jsonl"
+)
 
 SECRET = str(PROJECT / "lab/secrets.txt")
 WINDOW_SECONDS = 30
@@ -83,7 +87,7 @@ for event in events:
         })
 
 
-# 3. Identifier les observations R1 et R9
+# 3. Identifier les observations R1 et R6
 for event in events:
     details = event.get("process_kprobe")
 
@@ -109,7 +113,7 @@ for event in events:
                 "pid": process.get("pid")
             })
 
-    elif policy == "r9-tcp-connect":
+    elif policy == "r6-tcp-connect":
         sock = args[0].get("sock_arg", {})
         destination = sock.get("daddr")
 
@@ -127,7 +131,7 @@ for event in events:
             })
 
 
-# 4. Chercher la sequence R4 -> R1 -> R9
+# 4. Chercher la sequence R3 -> R1 -> R6
 alerts = []
 
 for shell in shells:
@@ -152,11 +156,11 @@ for shell in shells:
                 and 0 <= duration <= WINDOW_SECONDS
             ):
                 alerts.append({
-                    "rule_id": "R14",
+                    "rule_id": "R7",
                     "status": "ALERT",
                     "severity": "CRITICAL",
                     "time": connection["time"],
-                    "matched_rules": ["R4", "R1", "R9"],
+                    "matched_rules": ["R3", "R1", "R6"],
                     "shell_exec_id": shell["exec_id"],
                     "shell_pid": shell["pid"],
                     "file_process_pid": access["pid"],
@@ -189,13 +193,13 @@ with OUTPUT_FILE.open("w", encoding="utf-8") as output:
         output.write(json.dumps(alert, ensure_ascii=False) + "\n")
 
         print(
-            f"[ALERT R14] CRITICAL "
+            f"[ALERT R7] CRITICAL "
             f"| Shell PID={alert['shell_pid']} "
-            f"| Sequence=R4 -> R1 -> R9 "
+            f"| Sequence=R3 -> R1 -> R6 "
             f"| Duree={alert['duration_seconds']}s"
         )
 
-print("\n===== BILAN R14 =====")
+print("\n===== BILAN R7 =====")
 print(f"Shells surveilles : {len(shells)}")
 print(f"Acces sensibles observes : {len(file_accesses)}")
 print(f"Connexions inhabituelles observees : {len(network_connections)}")

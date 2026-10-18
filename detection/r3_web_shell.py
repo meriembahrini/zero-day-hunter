@@ -10,7 +10,11 @@ INPUT_FILE = (
     else PROJECT / "data/scenarios/r4_raw.jsonl"
 )
 
-OUTPUT_FILE = PROJECT / "data/scenarios/r4_results.jsonl"
+OUTPUT_FILE = (
+    Path(sys.argv[2])
+    if len(sys.argv) > 2
+    else Path.home() / "zero-day-hunter/data/scenarios/r3_results.jsonl"
+)
 
 SHELLS = {"sh", "bash", "dash"}
 SERVER_SCRIPT = "r4_web_server.py"
@@ -64,7 +68,7 @@ with INPUT_FILE.open(encoding="utf-8") as source, \
             normal_count += 1
 
         result = {
-            "rule_id": "R4",
+            "rule_id": "R3",
             "time": event.get("time"),
             "status": status,
             "severity": severity,
@@ -79,12 +83,12 @@ with INPUT_FILE.open(encoding="utf-8") as source, \
         output.write(json.dumps(result, ensure_ascii=False) + "\n")
 
         print(
-            f"[{status} R4] "
+            f"[{status} R3] "
             f"Programme={binary} "
             f"Parent={parent_binary}"
         )
 
-print("\n===== BILAN R4 =====")
+print("\n===== BILAN R3 =====")
 print(f"Normaux : {normal_count}")
 print(f"Alertes : {alert_count}")
 print(f"Resultats : {OUTPUT_FILE}")

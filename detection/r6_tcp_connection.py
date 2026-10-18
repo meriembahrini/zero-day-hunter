@@ -10,9 +10,13 @@ INPUT_FILE = (
     else PROJECT / "data/scenarios/r9_raw.jsonl"
 )
 
-OUTPUT_FILE = PROJECT / "data/scenarios/r9_results.jsonl"
+OUTPUT_FILE = (
+    Path(sys.argv[2])
+    if len(sys.argv) > 2
+    else Path.home() / "zero-day-hunter/data/scenarios/r6_results.jsonl"
+)
 
-POLICY_NAME = "r9-tcp-connect"
+POLICY_NAME = "r6-tcp-connect"
 TARGET_IP = "127.0.0.1"
 ALLOWED_PORT = 8081
 TEST_PORTS = {8081, 9090}
@@ -77,7 +81,7 @@ with INPUT_FILE.open(encoding="utf-8") as source, \
             alert_count += 1
 
         result = {
-            "rule_id": "R9",
+            "rule_id": "R6",
             "time": event.get("time"),
             "status": status,
             "severity": severity,
@@ -93,12 +97,12 @@ with INPUT_FILE.open(encoding="utf-8") as source, \
         output.write(json.dumps(result, ensure_ascii=False) + "\n")
 
         print(
-            f"[{status} R9] "
+            f"[{status} R6] "
             f"Programme={process.get('binary')} "
             f"Destination={destination}:{port}"
         )
 
-print("\n===== BILAN R9 =====")
+print("\n===== BILAN R6 =====")
 print(f"Normaux : {normal_count}")
 print(f"Alertes : {alert_count}")
 print(f"Resultats : {OUTPUT_FILE}")

@@ -7,17 +7,25 @@ PROJECT = Path.home() / "zero-day-hunter"
 INPUT_FILE = (
     Path(sys.argv[1])
     if len(sys.argv) > 1
-    else PROJECT / "data/scenarios/r8_raw.jsonl"
+    else PROJECT / "data/scenarios/r6_raw.jsonl"
 )
 
-OUTPUT_FILE = PROJECT / "data/scenarios/r8_results.jsonl"
+OUTPUT_FILE = (
+    Path(sys.argv[2])
+    if len(sys.argv) > 2
+    else Path.home() / "zero-day-hunter/data/scenarios/r4_results.jsonl"
+)
 
-ALLOWED_ROOT_BINARIES = {
-    "/usr/bin/id",
-    "/usr/bin/whoami"
+ADMIN_TOOLS = {
+    "sudo", "su", "chmod", "chown",
+    "useradd", "usermod", "passwd"
 }
 
+LAB_DIR = str(PROJECT / "lab") + "/"
+
+# Mémoriser les exécutions déjà traitées
 seen = set()
+
 normal_count = 0
 alert_count = 0
 
@@ -35,35 +43,45 @@ with INPUT_FILE.open("r", encoding="utf-8") as source, \
             continue
 
         process = details.get("process", {})
+        binary = process.get("binary", "")
+        tool = Path(binary).name
 
-        uid = process.get("uid")
-        if uid != 0:
+        if tool not in ADMIN_TOOLS:
             continue
 
-        binary = process.get("binary", "")
-        pid = process.get("pid")
         exec_id = process.get("exec_id")
-
         if exec_id and exec_id in seen:
             continue
-
         if exec_id:
             seen.add(exec_id)
 
-        # Politique de laboratoire
-        if binary in ALLOWED_ROOT_BINARIES:
+        pid = process.get("pid")
+        uid = process.get("uid")
+        arguments = process.get("arguments", "")
+        parent = details.get("parent", {})
+        parent_binary = parent.get("binary", "")
+
+        # Politique de laboratoire :
+        # chmod et chown sont autorisés uniquement
+        # lorsque le chemin lab/ apparaît dans les arguments.
+        lab_operation = (
+            tool in {"chmod", "chown"}
+            and LAB_DIR in arguments
+        )
+
+        if lab_operation:
             status = "NORMAL"
             severity = "INFO"
-            reason = "Programme root autorise"
+            reason = "Operation administrative dans le laboratoire"
             normal_count += 1
         else:
             status = "ALERT"
             severity = "MEDIUM"
-            reason = "Programme root non autorise"
+            reason = "Outil administratif hors contexte autorise"
             alert_count += 1
 
         result = {
-            "rule_id": "R8",
+            "rule_id": "R4",
             "time": event.get("time"),
             "status": status,
             "severity": severity,
@@ -72,19 +90,20 @@ with INPUT_FILE.open("r", encoding="utf-8") as source, \
             "uid": uid,
             "exec_id": exec_id,
             "binary": binary,
-            "arguments": process.get("arguments", ""),
-            "parent_binary": details.get("parent", {}).get("binary", "")
+            "arguments": arguments,
+            "parent_binary": parent_binary
         }
 
         output.write(json.dumps(result, ensure_ascii=False) + "\n")
 
         print(
-            f"[{status} R8] "
+            f"[{status} R4] "
             f"PID={pid} UID={uid} "
-            f"Programme={binary}"
+            f"Outil={tool} "
+            f"Raison={reason}"
         )
 
-print("\n===== BILAN R8 =====")
+print("\n===== BILAN R4 =====")
 print(f"Normaux : {normal_count}")
 print(f"Alertes : {alert_count}")
 print(f"Resultats : {OUTPUT_FILE}")

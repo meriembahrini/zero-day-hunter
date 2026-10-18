@@ -1,2 +1,0 @@
-{"rule_id": "R9", "time": "2026-10-10T23:57:59.245356200Z", "status": "NORMAL", "severity": "INFO", "pid": 2841, "exec_id": "dm0tYmFocmluaToyNjYxNzI5OTY2MjAxMDoyODQx", "binary": "/usr/bin/curl", "destination_ip": "127.0.0.1", "destination_port": 8081, "reason": "Destination TCP autorisee"}
-{"rule_id": "R9", "time": "2026-10-10T23:57:59.287252641Z", "status": "ALERT", "severity": "HIGH", "pid": 2843, "exec_id": "dm0tYmFocmluaToyNjYxNzQ1ODY2NTc4MjoyODQz", "binary": "/usr/bin/curl", "destination_ip": "127.0.0.1", "destination_port": 9090, "reason": "Destination TCP inattendue"}

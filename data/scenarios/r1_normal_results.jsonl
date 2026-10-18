@@ -1,1 +1,0 @@
-{"rule_id": "R1", "policy_name": "r1-sensitive-file-access", "time": "2026-10-10T22:35:02.961207610Z", "status": "NORMAL", "severity": "INFO", "pid": 2346, "exec_id": "dm0tYmFocmluaToyMTc2MDI4MDU2Nzg5MToyMzQ2", "binary": "/usr/bin/python3", "target_file": "/home/bahrini/zero-day-hunter/lab/secrets.txt"}

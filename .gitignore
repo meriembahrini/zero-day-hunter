@@ -25,3 +25,22 @@ installation/
 .env
 *.key
 *.pem
+
+# Données locales et résultats expérimentaux
+data/
+backups/
+
+# Modèles entraînés
+*.joblib
+
+# Fichiers de simulation et données locales sensibles
+lab/secrets.txt
+
+# Archives
+*.tar.gz
+*.zip
+
+# Caches et tests
+.pytest_cache/
+.streamlit/secrets.toml
+.gitignore.backup

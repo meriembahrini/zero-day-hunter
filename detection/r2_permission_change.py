@@ -12,7 +12,11 @@ INPUT_FILE = (
     else PROJECT / "data/scenarios/r2_events.jsonl"
 )
 
-OUTPUT_FILE = PROJECT / "data/scenarios/r2_results.jsonl"
+OUTPUT_FILE = (
+    Path(sys.argv[2])
+    if len(sys.argv) > 2
+    else Path.home() / "zero-day-hunter/data/scenarios/r2_results.jsonl"
+)
 
 normal_count = 0
 alert_count = 0

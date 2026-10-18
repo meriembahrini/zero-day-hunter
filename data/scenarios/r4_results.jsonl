@@ -1,1 +1,0 @@
-{"rule_id": "R4", "time": "2026-10-10T23:43:53.403126778Z", "status": "ALERT", "severity": "HIGH", "reason": "Shell lance par le serveur web", "pid": 2785, "exec_id": "dm0tYmFocmluaToyNTc3MTU4MzQyNTY1NzoyNzg1", "binary": "/bin/sh", "parent_binary": "/usr/bin/python3", "parent_arguments": "lab/web/r4_web_server.py"}
